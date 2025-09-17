@@ -28,16 +28,16 @@ def autenticacao(event, context):
         conexao.close()
         conn.close()
 
-        if retorno_consulta_cliente:
-            return {
-                "statusCode": 200,
-                "body": json.dumps({"success": True, "cliente": consulta_cliente.nome, "cpf": consulta_cliente.cpf})
-            }
-        else:
+        if not retorno_consulta_cliente:
             return {
                 "statusCode": 404,
                 "body": json.dumps({"success": False, "error": "CPF não encontrado"})
             }
+            
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"success": True, "cliente": consulta_cliente.nome})
+        }
 
     except Exception as e:
         return {
