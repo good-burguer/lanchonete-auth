@@ -1,1 +1,5 @@
-# dependências da Lambda (ex.: boto3) - adicione conforme necessário
+# requirements.txt (versão final)
+pg8000
+PyJWT
+boto3
+python-dotenv
