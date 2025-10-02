@@ -1,0 +1,74 @@
+# .github/workflows/deploy.yml
+name: CI/CD da Lambda de Autenticação
+
+# Gatilho: Apenas manual (workflow_dispatch) para o nosso teste
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # ---------------------------------------------
+  # Job 1: Empacotar o código (CI)
+  # ---------------------------------------------
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Empacotar a Função Lambda
+        run: |
+          mkdir build
+          pip install -r requirements.txt -t ./build
+          cp handler.py ./build/
+          cp -r src/ ./build/
+          cd build
+          zip -r ../deployment_package.zip .
+      
+      - name: Fazer Upload do Artefacto para o Job Seguinte
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambda-package
+          path: deployment_package.zip
+
+  # ---------------------------------------------
+  # Job 2: Fazer o Deploy do código (CD)
+  # ---------------------------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build # <-- Depende do sucesso do job 'build'
+    
+    steps:
+      - name: Fazer Download do Artefacto
+        uses: actions/download-artifact@v4
+        with:
+          name: lambda-package
+
+      - name: Configurar credenciais da AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Fazer Upload para o S3 e Atualizar Lambda
+        run: |
+          # Para o teste, vamos sempre implementar no ambiente 'dev'
+          S3_KEY="lanchonete-auth/dev/deployment_package.zip"
+          LAMBDA_NAME="gb-dev-auth-lambda"
+
+          echo "A fazer upload para s3://${{ vars.S3_ARTIFACT_BUCKET }}/${S3_KEY}"
+          aws s3 cp deployment_package.zip s3://${{ vars.S3_ARTIFACT_BUCKET }}/${S3_KEY}
+
+          echo "A atualizar o código da função Lambda: $LAMBDA_NAME"
+          aws lambda update-function-code \
+            --function-name $LAMBDA_NAME \
+            --s3-bucket ${{ vars.S3_ARTIFACT_BUCKET }} \
+            --s3-key $S3_KEY
