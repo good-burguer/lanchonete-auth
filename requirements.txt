@@ -1,1 +1,2 @@
-# dependências da Lambda (ex.: boto3) - adicione conforme necessário
+boto3
+PyJWT

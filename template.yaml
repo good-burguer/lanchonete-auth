@@ -5,13 +5,50 @@ Resources:
   AuthFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handler.handler
-      Runtime: python3.12
+      Handler: autenticacao.handler
+      Runtime: python3.11
       MemorySize: 256
       Timeout: 10
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref CognitoUserPool
+          JWT_SECRET_NAME: jwtSecret
+          LOG_LEVEL: INFO
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:ListUsers
+                - cognito-idp:AdminGetUser
+              Resource: "*"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref JwtSecret
       Events:
         Api:
           Type: Api
           Properties:
             Path: /auth
-            Method: get
+            Method: post
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: LanchoneteAuthPool
+
+  JwtSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: jwtSecret
+      SecretString: your-super-secret-key
+
+Outputs:
+  ApiUrl:
+    Description: "Endpoint da API de autenticação"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/auth"
+
+  UserPoolId:
+    Description: "ID do User Pool do Cognito"
+    Value: !Ref CognitoUserPool

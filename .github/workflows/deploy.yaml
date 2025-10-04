@@ -1,0 +1,45 @@
+name: Deploy Lambda Auth
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+env:
+  AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ROLE_TO_ASSUME: ${{ vars.AWS_ROLE_TO_ASSUME }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<SEU_ACCOUNT_ID>:role/gb-dev-gha-lanchonete-auth
+          role-session-name: gha-lanchonete-auth
+          aws-region: us-east-1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          version: 1.98.0  # ou mais recente se quiser atualizar
+
+      - name: SAM build
+        run: sam build
+
+      - name: SAM deploy
+        run: sam deploy --config-file samconfig.toml --no-confirm-changeset --no-fail-on-empty-changeset

@@ -1,0 +1,11 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "${SAM_STACK_NAME}"
+resolve_s3 = true
+s3_prefix = "${SAM_S3_PREFIX}"
+region = "${AWS_REGION}"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
