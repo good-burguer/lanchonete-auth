@@ -43,4 +43,10 @@ jobs:
         run: sam build
 
       - name: SAM deploy
-        run: sam deploy --stack-name $SAM_STACK_NAME --config-file samconfig.toml --no-confirm-changeset --no-fail-on-empty-changeset
+        run: |
+          sam deploy \
+            --stack-name "$SAM_STACK_NAME" \
+            --region "$AWS_REGION" \
+            --config-file samconfig.toml \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset
