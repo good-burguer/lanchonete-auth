@@ -1,7 +1,40 @@
+# SAM build artifacts
 .aws-sam/
+
+# Python
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
 .env
-*.pyc
-.idea/
+.venv/
+venv/
+
+# VSCode
 .vscode/
+.idea/
+
+# Logs
 *.log
+
+# MacOS
+.DS_Store
+
+# Test coverage reports
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+
+# Jupyter notebooks (se estiver usando)
+.ipynb_checkpoints/
+
+# Arquivos temporários de sistema
+*.swp
+*.swo
