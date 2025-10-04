@@ -15,7 +15,8 @@ env:
   SAM_STACK_NAME: ${{ vars.SAM_STACK_NAME }}
 
 jobs:
-  deploy:
+  deploy_lambda_auth:
+    name: Deploy Lambda Auth API
     runs-on: ubuntu-latest
 
     steps:
