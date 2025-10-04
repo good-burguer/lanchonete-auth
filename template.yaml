@@ -6,7 +6,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./
-      Handler: src.autenticacao.handler
+      Handler: autenticacao.handler
       Runtime: python3.11
       MemorySize: 256
       Timeout: 10
