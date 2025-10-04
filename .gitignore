@@ -37,4 +37,4 @@ coverage.xml
 
 # Arquivos temporários de sistema
 *.swp
-*.swo
+*.swo.DS_Store
