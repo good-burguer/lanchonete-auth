@@ -1,0 +1,7 @@
+.aws-sam/
+__pycache__/
+.env
+*.pyc
+.idea/
+.vscode/
+*.log
