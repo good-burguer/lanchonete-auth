@@ -50,4 +50,7 @@ jobs:
             --region "$AWS_REGION" \
             --config-file samconfig.toml \
             --no-confirm-changeset \
-            --no-fail-on-empty-changeset
+            --no-fail-on-empty-changeset \
+            --parameter-overrides JwtSecretValue="$JWT_SECRET_VALUE"
+        env:
+          JWT_SECRET_VALUE: ${{ secrets.JWT_SECRET_VALUE }}
