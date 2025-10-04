@@ -12,6 +12,7 @@ env:
   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
   AWS_REGION: ${{ vars.AWS_REGION }}
   AWS_ROLE_TO_ASSUME: ${{ vars.AWS_ROLE_TO_ASSUME }}
+  SAM_STACK_NAME: ${{ vars.SAM_STACK_NAME }}
 
 jobs:
   deploy:
@@ -24,9 +25,9 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<SEU_ACCOUNT_ID>:role/gb-dev-gha-lanchonete-auth
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           role-session-name: gha-lanchonete-auth
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -42,4 +43,4 @@ jobs:
         run: sam build
 
       - name: SAM deploy
-        run: sam deploy --config-file samconfig.toml --no-confirm-changeset --no-fail-on-empty-changeset
+        run: sam deploy --stack-name $SAM_STACK_NAME --config-file samconfig.toml --no-confirm-changeset --no-fail-on-empty-changeset
