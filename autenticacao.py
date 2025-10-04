@@ -61,7 +61,7 @@ def handler(event, context):
 
         return {
             "statusCode": 200,
-            "body": json.dumps({"success": True, "token": token})
+            "body": json.dumps({"success": True, "token": token, "mensagem": "Autenticação realizada com sucesso"})
         }
 
     except Exception as e:
